@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Reembolso</title>
-    <!-- Link para o arquivo CSS externo -->
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 </head>
 <body>
     <h1>Calculadora de Reembolso</h1>
@@ -16,37 +16,25 @@
     <h2>Resultados:</h2>
     <p id="resultado"></p>
 
+    <!-- Botão para gerar PDF -->
+    <button onclick="gerarPDF()">Gerar PDF</button>
+
     <script>
         function calcular() {
-            // Captura o valor digitado
             const habitantes = parseInt(document.getElementById('habitantes').value);
-
-            // Calcula lesão
             const lesao = Math.floor(habitantes * 0.0187);
-
-            // Calcula lesão grave
             const lesao_grave = Math.floor(lesao * 0.20);
-
-            // Calcula procedimentos
             const procedimentos = lesao_grave * 4;
-
-            // Calcula reembolso
             const reembolso = procedimentos * 32.40;
-
-            // Calcula reembolso anual
             const reembolso_anual = reembolso * 12;
 
-            // Formata os valores com ponto de milhar
             const habitantes_formatado = habitantes.toLocaleString('pt-BR');
             const lesao_formatado = lesao.toLocaleString('pt-BR');
             const lesao_grave_formatado = lesao_grave.toLocaleString('pt-BR');
             const procedimentos_formatado = procedimentos.toLocaleString('pt-BR');
-
-            // Formata os valores monetários em Real Brasileiro
             const reembolso_formatado = reembolso.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             const reembolso_anual_formatado = reembolso_anual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-            // Exibe os resultados
             document.getElementById('resultado').innerHTML = `
             Habitantes: ${habitantes_formatado}<br>
             Lesão: ${lesao_formatado}<br>
@@ -55,6 +43,24 @@
             Reembolso: ${reembolso_formatado}<br>
             Reembolso Anual: ${reembolso_anual_formatado}
             `;
+        }
+
+        function gerarPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Captura o conteúdo da área de resultados
+            const titulo = document.querySelector('h1').innerText;
+            const resultados = document.getElementById('resultado').innerText;
+
+            // Define a formatação no PDF
+            doc.setFontSize(16);
+            doc.text(titulo, 10, 10);
+            doc.setFontSize(12);
+            doc.text(resultados, 10, 20);
+
+            // Salva o PDF com o nome desejado
+            doc.save('resultado_reembolso.pdf');
         }
     </script>
 </body>
